@@ -1,0 +1,32 @@
+from flask import Flask, render_template, request, jsonify
+import pandas as pd
+from sklearn.cluster import KMeans
+# Assume you have a machine learning model trained for customer segmentation
+
+app = Flask(__name__)
+
+# Define a function to process data and return insights
+def process_data(data):
+    # Perform data analysis and segmentation using AI model
+    # For this example, let's assume we have a trained KMeans clustering model
+    kmeans = KMeans(n_clusters=3)
+    clusters = kmeans.fit_predict(data)
+    insights = {"cluster_labels": clusters.tolist()}  # Example output
+    return insights
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    # Receive data from frontend
+    data = request.json['data']
+    # Convert data to pandas DataFrame
+    df = pd.DataFrame(data)
+    # Process data and generate insights
+    insights = process_data(df)
+    return jsonify(insights)
+
+if __name__ == '__main__':
+    app.run(debug=True)
